@@ -68,7 +68,7 @@ export default function ProjectSlider() {
         >
           {projects.map((project) => {
             const hasImages = project.images && project.images.length > 0;
-            const currentImg = hasImages ? project.images[innerImageIndex % project.images.length] : null;
+            const currentImg = hasImages ? project.images[innerImageIndex % project.images.length] : undefined;
 
             return (
               <div key={project.id} className="min-w-full relative h-full flex-shrink-0">
