@@ -41,6 +41,8 @@ export default function ProjectSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [innerImageIndex, setInnerImageIndex] = useState(0);
 
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   useEffect(() => {
     const timer = setInterval(() => {
       setInnerImageIndex((prev) => prev + 1);
@@ -59,10 +61,10 @@ export default function ProjectSlider() {
   };
 
   return (
+    <>
     <div className="relative w-full max-w-5xl mx-auto mt-8 group">
       <div 
-        className="overflow-hidden rounded-2xl relative aspect-square sm:aspect-[4/3] md:aspect-video bg-black shadow-2xl cursor-pointer"
-        onClick={nextSlide}
+        className="overflow-hidden rounded-2xl relative aspect-square sm:aspect-[4/3] md:aspect-video bg-black shadow-2xl cursor-zoom-in"
       >
         <div 
           className="flex transition-transform duration-500 ease-out h-full"
@@ -73,7 +75,9 @@ export default function ProjectSlider() {
             const currentImg = hasImages ? project.images[innerImageIndex % project.images.length] : undefined;
 
             return (
-              <div key={project.id} className="min-w-full relative h-full flex-shrink-0">
+              <div key={project.id} className="min-w-full relative h-full flex-shrink-0" onClick={() => {
+                if (currentImg) setSelectedImage(currentImg);
+              }}>
                 {hasImages ? (
                   <div className="absolute inset-0">
                     <img 
@@ -89,10 +93,10 @@ export default function ProjectSlider() {
                 )}
               
               {/* Gradient Overlay for Text */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
               
               {/* Text Content Overlay */}
-              <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-12">
+              <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-12 pointer-events-none">
                 <h3 className="text-2xl sm:text-4xl font-bold text-white mb-2 glitch-hover transition-transform origin-left">
                   {project.title}
                 </h3>
@@ -115,14 +119,14 @@ export default function ProjectSlider() {
         {/* Navigation Arrows */}
         <button 
           onClick={(e) => { e.stopPropagation(); prevSlide(); }}
-          className="absolute left-2 sm:left-4 top-1/3 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/80 hover:scale-110 backdrop-blur-md transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100 z-20"
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/80 hover:scale-110 backdrop-blur-md transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100 z-20"
           aria-label="Previous Slide"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
         </button>
         <button 
           onClick={(e) => { e.stopPropagation(); nextSlide(); }}
-          className="absolute right-2 sm:right-4 top-1/3 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/80 hover:scale-110 backdrop-blur-md transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100 z-20"
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/80 hover:scale-110 backdrop-blur-md transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100 z-20"
           aria-label="Next Slide"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
@@ -144,6 +148,30 @@ export default function ProjectSlider() {
           />
         ))}
       </div>
-    </div>
+      </div>
+      
+      {/* Lightbox / Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button 
+            className="absolute top-6 left-6 w-12 h-12 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all z-50"
+            onClick={() => setSelectedImage(null)}
+            aria-label="Close"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+          
+          <img 
+            src={selectedImage} 
+            alt="Project full view" 
+            className="max-w-5xl w-full max-h-[90vh] object-contain rounded-xl shadow-2xl"
+            onClick={(e) => e.stopPropagation()} 
+          />
+        </div>
+      )}
+    </>
   );
 }
