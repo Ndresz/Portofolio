@@ -41,7 +41,7 @@ export default function ProjectSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [innerImageIndex, setInnerImageIndex] = useState(0);
 
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -64,7 +64,7 @@ export default function ProjectSlider() {
     <>
     <div className="relative w-full max-w-5xl mx-auto mt-8 group">
       <div 
-        className="overflow-hidden rounded-2xl relative aspect-square sm:aspect-[4/3] md:aspect-video bg-black shadow-2xl cursor-zoom-in"
+        className="overflow-hidden rounded-2xl relative aspect-square sm:aspect-[4/3] md:aspect-video bg-black shadow-2xl"
       >
         <div 
           className="flex transition-transform duration-500 ease-out h-full"
@@ -75,9 +75,7 @@ export default function ProjectSlider() {
             const currentImg = hasImages ? project.images[innerImageIndex % project.images.length] : undefined;
 
             return (
-              <div key={project.id} className="min-w-full relative h-full flex-shrink-0" onClick={() => {
-                if (currentImg) setSelectedImage(currentImg);
-              }}>
+              <div key={project.id} className="min-w-full relative h-full flex-shrink-0">
                 {hasImages ? (
                   <div className="absolute inset-0">
                     <img 
@@ -97,8 +95,13 @@ export default function ProjectSlider() {
               
               {/* Text Content Overlay */}
               <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-12 pointer-events-none">
-                <h3 className="text-2xl sm:text-4xl font-bold text-white mb-2 glitch-hover transition-transform origin-left">
+                <h3 
+                  onClick={() => setSelectedProject(project)}
+                  className="inline-block text-2xl sm:text-4xl font-bold text-white mb-2 glitch-hover transition-transform origin-left cursor-pointer pointer-events-auto hover:text-slate-300"
+                  title="Click to view details"
+                >
                   {project.title}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline ml-2 opacity-50"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
                 </h3>
                 <p className="text-slate-200 text-xs sm:text-base max-w-2xl mb-4 line-clamp-4 sm:line-clamp-none">
                   {project.description}
@@ -150,26 +153,64 @@ export default function ProjectSlider() {
       </div>
       </div>
       
-      {/* Lightbox / Modal */}
-      {selectedImage && (
+      {/* Project Details Modal */}
+      {selectedProject && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
-          onClick={() => setSelectedImage(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-sm overflow-y-auto"
+          onClick={() => setSelectedProject(null)}
         >
-          <button 
-            className="absolute top-6 left-6 w-12 h-12 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all z-50"
-            onClick={() => setSelectedImage(null)}
-            aria-label="Close"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-          </button>
-          
-          <img 
-            src={selectedImage} 
-            alt="Project full view" 
-            className="max-w-5xl w-full max-h-[90vh] object-contain rounded-xl shadow-2xl"
+          <div 
+            className="relative w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden my-auto flex flex-col md:flex-row"
             onClick={(e) => e.stopPropagation()} 
-          />
+          >
+            <button 
+              className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black hover:scale-110 transition-all z-50"
+              onClick={() => setSelectedProject(null)}
+              aria-label="Close"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+            
+            {/* Modal Image Area */}
+            <div className="w-full md:w-1/2 bg-black flex items-center justify-center min-h-[300px] md:min-h-[400px]">
+              {selectedProject.images && selectedProject.images.length > 0 ? (
+                <img 
+                  src={selectedProject.images[0]} 
+                  alt={selectedProject.title} 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className={`w-full h-full ${selectedProject.bgClass} flex items-center justify-center opacity-80`}>
+                  <span className="text-white/20 text-2xl font-bold tracking-widest uppercase">{selectedProject.title}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Content Area */}
+            <div className="w-full md:w-1/2 p-6 sm:p-10 flex flex-col justify-center">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">
+                {selectedProject.title}
+              </h2>
+              
+              <div className="mb-8">
+                <h4 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Project Description</h4>
+                <p className="text-slate-300 leading-relaxed text-sm sm:text-base">
+                  {selectedProject.description}
+                </p>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Technologies</h4>
+                <div className="flex flex-wrap gap-2">
+                  {selectedProject.tech.map((tech) => (
+                    <span key={tech} className="rounded-md bg-slate-800 border border-slate-700 px-3 py-1.5 text-sm font-medium text-slate-200">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </>
