@@ -61,7 +61,7 @@ export default function ProjectSlider() {
   return (
     <div className="relative w-full max-w-5xl mx-auto mt-8 group">
       {/* Main Slider Container */}
-      <div className="overflow-hidden rounded-2xl relative aspect-video bg-black shadow-2xl">
+      <div className="overflow-hidden rounded-2xl relative aspect-square sm:aspect-[4/3] md:aspect-video bg-black shadow-2xl">
         <div 
           className="flex transition-transform duration-500 ease-out h-full"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -90,11 +90,11 @@ export default function ProjectSlider() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
               
               {/* Text Content Overlay */}
-              <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-12">
-                <h3 className="text-3xl sm:text-4xl font-bold text-white mb-2 glitch-hover transition-transform origin-left">
+              <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-12">
+                <h3 className="text-2xl sm:text-4xl font-bold text-white mb-2 glitch-hover transition-transform origin-left">
                   {project.title}
                 </h3>
-                <p className="text-slate-200 text-sm sm:text-base max-w-2xl mb-4">
+                <p className="text-slate-200 text-xs sm:text-base max-w-2xl mb-4 line-clamp-4 sm:line-clamp-none">
                   {project.description}
                 </p>
                 <div className="flex flex-wrap gap-2">
