@@ -172,12 +172,12 @@ export default function ProjectSlider() {
             </button>
             
             {/* Modal Image Area */}
-            <div className="w-full md:w-1/2 bg-black flex items-center justify-center min-h-[300px] md:min-h-[400px]">
+            <div className="w-full md:w-1/2 bg-black flex items-center justify-center min-h-[300px] md:min-h-[400px] relative">
               {selectedProject.images && selectedProject.images.length > 0 ? (
                 <img 
-                  src={selectedProject.images[0]} 
+                  src={selectedProject.images[innerImageIndex % selectedProject.images.length]} 
                   alt={selectedProject.title} 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-opacity duration-500"
                 />
               ) : (
                 <div className={`w-full h-full ${selectedProject.bgClass} flex items-center justify-center opacity-80`}>
